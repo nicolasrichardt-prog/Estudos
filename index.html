@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderno de Estudos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EFE3;
+    --paper-2:#EAE4D3;
+    --ink:#2B2A28;
+    --ink-soft:#5B564C;
+    --rule:#C7BEA3;
+    --green:#2F5233;
+    --green-dark:#223E27;
+    --amber:#B8862E;
+    --amber-light:#E7C888;
+    --red:#A23E3E;
+    --white:#FCFAF4;
+    --radius:6px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{
+    max-width:720px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--white);
+    border-left:3px solid var(--red);
+    border-right:1px solid var(--rule);
+    position:relative;
+    padding-bottom:60px;
+  }
+  header.top{
+    padding:28px 24px 0 28px;
+    border-bottom:1px solid var(--rule);
+  }
+  header.top h1{
+    font-family:'Source Serif 4', serif;
+    font-weight:700;
+    font-size:1.7rem;
+    margin:0 0 4px 0;
+    letter-spacing:-0.01em;
+  }
+  header.top p{
+    margin:0 0 18px 0;
+    color:var(--ink-soft);
+    font-size:0.92rem;
+  }
+  nav.tabs{
+    display:flex;
+    gap:4px;
+    padding:0 12px;
+    margin-top:6px;
+  }
+  nav.tabs button{
+    flex:1;
+    background:var(--paper-2);
+    border:1px solid var(--rule);
+    border-bottom:none;
+    border-radius:8px 8px 0 0;
+    padding:10px 6px;
+    font-family:'Inter',sans-serif;
+    font-size:0.85rem;
+    font-weight:600;
+    color:var(--ink-soft);
+    cursor:pointer;
+    position:relative;
+    top:1px;
+  }
+  nav.tabs button.active{
+    background:var(--white);
+    color:var(--ink);
+    border-bottom:1px solid var(--white);
+  }
+  main{
+    padding:22px 24px 40px 28px;
+  }
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  h2.section-title{
+    font-family:'Source Serif 4', serif;
+    font-size:1.2rem;
+    font-weight:600;
+    margin:0 0 4px 0;
+  }
+  p.hint{
+    color:var(--ink-soft);
+    font-size:0.88rem;
+    margin:0 0 18px 0;
+  }
+
+  /* schedule tab */
+  .day-card{
+    border:1px solid var(--rule);
+    border-radius:var(--radius);
+    margin-bottom:12px;
+    overflow:hidden;
+  }
+  .day-card summary{
+    list-style:none;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 14px;
+    background:var(--paper-2);
+    cursor:pointer;
+    font-weight:600;
+    font-size:0.95rem;
+  }
+  .day-card summary::-webkit-details-marker{display:none;}
+  .day-card summary .count{
+    font-weight:400;
+    color:var(--ink-soft);
+    font-size:0.82rem;
+  }
+  .day-card .body{
+    padding:12px 14px 14px 14px;
+  }
+  .slot-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 0;
+    border-bottom:1px dashed var(--rule);
+    font-size:0.9rem;
+  }
+  .slot-row:last-of-type{border-bottom:none;}
+  .slot-row .slot-time{
+    font-variant-numeric:tabular-nums;
+    color:var(--ink);
+    min-width:100px;
+  }
+  .slot-row .slot-subject{
+    flex:1;
+    color:var(--green-dark);
+    font-weight:600;
+  }
+  .slot-row button.remove{
+    background:none;
+    border:none;
+    color:var(--red);
+    font-size:1.1rem;
+    cursor:pointer;
+    line-height:1;
+    padding:4px;
+  }
+  .add-slot-form{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid var(--rule);
+  }
+  .add-slot-form input[type=time]{
+    border:1px solid var(--rule);
+    border-radius:4px;
+    padding:6px 8px;
+    font-family:inherit;
+    font-size:0.85rem;
+    width:100px;
+  }
+  .add-slot-form input[type=text]{
+    border:1px solid var(--rule);
+    border-radius:4px;
+    padding:6px 8px;
+    font-family:inherit;
+    font-size:0.85rem;
+    flex:1;
+    min-width:120px;
+  }
+  .btn{
+    background:var(--green);
+    color:var(--white);
+    border:none;
+    border-radius:4px;
+    padding:8px 14px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:0.85rem;
+    cursor:pointer;
+  }
+  .btn:hover{background:var(--green-dark);}
+  .btn.secondary{
+    background:var(--white);
+    color:var(--green);
+    border:1px solid var(--green);
+  }
+  .btn.small{padding:6px 10px;font-size:0.8rem;}
+  .btn:disabled{opacity:0.5;cursor:default;}
+
+  /* calendar tab */
+  .cal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .cal-header .month-label{
+    font-family:'Source Serif 4', serif;
+    font-size:1.15rem;
+    font-weight:600;
+    text-transform:capitalize;
+  }
+  .cal-header button{
+    background:none;
+    border:1px solid var(--rule);
+    border-radius:50%;
+    width:34px;height:34px;
+    font-size:1rem;
+    cursor:pointer;
+    color:var(--ink);
+  }
+  .cal-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:4px;
+    margin-bottom:18px;
+  }
+  .cal-grid .wd{
+    text-align:center;
+    font-size:0.68rem;
+    color:var(--ink-soft);
+    font-weight:600;
+    padding-bottom:4px;
+  }
+  .cal-cell{
+    aspect-ratio:1;
+    border:1px solid var(--rule);
+    border-radius:4px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-size:0.82rem;
+    cursor:pointer;
+    background:var(--white);
+    position:relative;
+  }
+  .cal-cell.empty{visibility:hidden;cursor:default;}
+  .cal-cell.no-slot{
+    color:var(--ink-soft);
+    cursor:default;
+    background:var(--paper);
+    border-style:dashed;
+  }
+  .cal-cell.selected{outline:2px solid var(--green);outline-offset:-2px;}
+  .cal-cell .dot{
+    width:6px;height:6px;border-radius:50%;
+    margin-top:3px;
+    background:var(--rule);
+  }
+  .cal-cell.full .dot{background:var(--amber);}
+  .cal-cell.partial .dot{background:var(--amber-light);}
+  .cal-cell.today{font-weight:700;color:var(--green-dark);}
+
+  .day-detail{
+    border:1px solid var(--rule);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    background:var(--paper-2);
+  }
+  .day-detail h3{
+    font-family:'Source Serif 4', serif;
+    margin:0 0 10px 0;
+    font-size:1rem;
+    text-transform:capitalize;
+  }
+  .check-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 0;
+    border-bottom:1px dashed var(--rule);
+    font-size:0.9rem;
+  }
+  .check-row:last-child{border-bottom:none;}
+  .check-row input[type=checkbox]{
+    width:20px;height:20px;
+    accent-color:var(--amber);
+    flex-shrink:0;
+  }
+  .check-row .label{flex:1;}
+  .check-row .label .time{color:var(--ink-soft);font-size:0.8rem;display:block;}
+  .check-row .label .subj{font-weight:600;color:var(--green-dark);}
+  .muted{color:var(--ink-soft);font-size:0.88rem;}
+
+  /* report tab */
+  .report-controls{
+    display:flex;
+    gap:10px;
+    align-items:end;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+  }
+  .report-controls label{
+    display:block;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+  }
+  .report-controls input[type=month]{
+    border:1px solid var(--rule);
+    border-radius:4px;
+    padding:8px 10px;
+    font-family:inherit;
+    font-size:0.9rem;
+  }
+  #relatorio-conteudo{
+    background:var(--white);
+    padding:18px;
+    border:1px solid var(--rule);
+    border-radius:var(--radius);
+  }
+  .report-title{
+    font-family:'Source Serif 4', serif;
+    font-size:1.25rem;
+    font-weight:700;
+    margin:0 0 2px 0;
+    text-transform:capitalize;
+  }
+  .report-sub{
+    color:var(--ink-soft);
+    font-size:0.85rem;
+    margin:0 0 18px 0;
+  }
+  .stat-row{
+    display:flex;
+    gap:18px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+  }
+  .stat-box{
+    flex:1;
+    min-width:110px;
+    border:1px solid var(--rule);
+    border-radius:var(--radius);
+    padding:10px 12px;
+    background:var(--paper);
+  }
+  .stat-box .num{
+    font-family:'Source Serif 4', serif;
+    font-size:1.4rem;
+    font-weight:700;
+    color:var(--green-dark);
+  }
+  .stat-box .lbl{
+    font-size:0.72rem;
+    color:var(--ink-soft);
+  }
+  .donut-wrap{
+    display:flex;
+    justify-content:center;
+    margin:10px 0 24px 0;
+  }
+  table.subjects{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.85rem;
+    margin-bottom:8px;
+  }
+  table.subjects th{
+    text-align:left;
+    font-size:0.72rem;
+    color:var(--ink-soft);
+    font-weight:600;
+    border-bottom:1px solid var(--rule);
+    padding:6px 4px;
+  }
+  table.subjects td{
+    padding:8px 4px;
+    border-bottom:1px dashed var(--rule);
+    vertical-align:middle;
+  }
+  .subj-name{font-weight:600;color:var(--green-dark);}
+  .bar-track{
+    background:var(--paper-2);
+    border-radius:3px;
+    height:8px;
+    width:100%;
+    overflow:hidden;
+  }
+  .bar-fill{
+    background:var(--amber);
+    height:100%;
+  }
+  .empty-state{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:0.9rem;
+    padding:30px 10px;
+  }
+  .actions-row{
+    display:flex;
+    gap:10px;
+    margin-top:16px;
+  }
+  footer.reset{
+    text-align:center;
+    padding:16px;
+    font-size:0.75rem;
+  }
+  footer.reset a{color:var(--ink-soft);cursor:pointer;text-decoration:underline;}
+  @media (max-width:420px){
+    header.top{padding:20px 16px 0 20px;}
+    main{padding:18px 16px 32px 20px;}
+    .cal-cell{font-size:0.72rem;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <h1>Caderno de Estudos</h1>
+    <p>Sua rotina, marcada dia a dia.</p>
+    <nav class="tabs">
+      <button data-tab="horarios" class="active">Horários</button>
+      <button data-tab="calendario">Calendário</button>
+      <button data-tab="relatorio">Relatório</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HORARIOS TAB -->
+    <section class="tab-panel active" id="tab-horarios">
+      <h2 class="section-title">Sua semana de estudos</h2>
+      <p class="hint">Defina os horários e a matéria de cada dia da semana. Isso vira a base do seu calendário.</p>
+      <div id="dias-container"></div>
+    </section>
+
+    <!-- CALENDARIO TAB -->
+    <section class="tab-panel" id="tab-calendario">
+      <div class="cal-header">
+        <button id="prev-month">‹</button>
+        <div class="month-label" id="cal-month-label"></div>
+        <button id="next-month">›</button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div id="day-detail-container"></div>
+    </section>
+
+    <!-- RELATORIO TAB -->
+    <section class="tab-panel" id="tab-relatorio">
+      <h2 class="section-title">Relatório mensal</h2>
+      <p class="hint">Escolha o mês e gere o resumo do que foi estudado.</p>
+      <div class="report-controls">
+        <div>
+          <label for="report-month">Mês</label>
+          <input type="month" id="report-month">
+        </div>
+        <button class="btn" id="gerar-relatorio">Gerar relatório</button>
+      </div>
+      <div id="relatorio-resultado"></div>
+    </section>
+  </main>
+
+  <footer class="reset"><a id="reset-link">Apagar todos os dados</a></footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  const STORAGE_KEY = "study-app-data";
+  const WEEKDAYS = ["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"];
+  const WEEKDAYS_SHORT = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+  const MONTHS = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+  const PALETTE = ["#2F5233","#B8862E","#5B7B9A","#A23E3E","#7A5C9E","#3D8B84","#9A6B3E"];
+
+  let state = { schedule:{0:[],1:[],2:[],3:[],4:[],5:[],6:[]}, records:{} };
+
+  function pad(n){ return String(n).padStart(2,"0"); }
+  function dateStr(y,m,d){ return `${y}-${pad(m)}-${pad(d)}`; }
+  function fmtMin(mins){
+    const h = Math.floor(mins/60), m = mins%60;
+    if(h===0) return `${m}min`;
+    if(m===0) return `${h}h`;
+    return `${h}h${pad(m)}`;
+  }
+  function slotDuration(slot){
+    const [sh,sm] = slot.start.split(":").map(Number);
+    const [eh,em] = slot.end.split(":").map(Number);
+    return Math.max(0,(eh*60+em)-(sh*60+sm));
+  }
+  function subjectColor(name, indexMap){
+    if(!(name in indexMap)) indexMap[name] = Object.keys(indexMap).length;
+    return PALETTE[indexMap[name] % PALETTE.length];
+  }
+
+  async function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        state = Object.assign({schedule:{0:[],1:[],2:[],3:[],4:[],5:[],6:[]},records:{}}, parsed);
+        for(let i=0;i<7;i++){ if(!state.schedule[i]) state.schedule[i]=[]; }
+      }
+    }catch(e){
+      // no existing data yet — keep defaults
+    }
+  }
+  async function saveState(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }catch(e){
+      console.error("Falha ao salvar dados", e);
+      alert("Não foi possível salvar os dados neste navegador.");
+    }
+  }
+
+  // ---------- TABS ----------
+  document.querySelectorAll("nav.tabs button").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById("tab-"+btn.dataset.tab).classList.add("active");
+      if(btn.dataset.tab==="calendario") renderCalendar();
+    });
+  });
+
+  // ---------- HORARIOS TAB ----------
+  function renderDias(){
+    const container = document.getElementById("dias-container");
+    container.innerHTML = "";
+    for(let d=0; d<7; d++){
+      const slots = state.schedule[d].slice().sort((a,b)=> a.start.localeCompare(b.start));
+      const details = document.createElement("details");
+      details.className = "day-card";
+      details.open = slots.length>0;
+      const summary = document.createElement("summary");
+      summary.innerHTML = `<span>${WEEKDAYS[d]}</span><span class="count">${slots.length? slots.length+" horário(s)":"nenhum horário"}</span>`;
+      details.appendChild(summary);
+
+      const body = document.createElement("div");
+      body.className = "body";
+
+      if(slots.length===0){
+        const p = document.createElement("p");
+        p.className = "muted";
+        p.style.margin = "0 0 8px 0";
+        p.textContent = "Nenhum horário definido para este dia.";
+        body.appendChild(p);
+      }
+
+      slots.forEach(slot=>{
+        const row = document.createElement("div");
+        row.className = "slot-row";
+        row.innerHTML = `<span class="slot-time">${slot.start}–${slot.end}</span><span class="slot-subject">${escapeHtml(slot.subject)}</span>`;
+        const rm = document.createElement("button");
+        rm.className = "remove";
+        rm.title = "Remover";
+        rm.textContent = "×";
+        rm.addEventListener("click", async ()=>{
+          state.schedule[d] = state.schedule[d].filter(s=>s.id!==slot.id);
+          await saveState();
+          renderDias();
+        });
+        row.appendChild(rm);
+        body.appendChild(row);
+      });
+
+      const form = document.createElement("div");
+      form.className = "add-slot-form";
+      form.innerHTML = `
+        <input type="time" class="in-start" value="19:00">
+        <input type="time" class="in-end" value="20:00">
+        <input type="text" class="in-subject" placeholder="Matéria (ex: Matemática)" list="subjects-list">
+        <button class="btn small add-btn">+ Adicionar</button>
+      `;
+      body.appendChild(form);
+      details.appendChild(body);
+      container.appendChild(details);
+
+      form.querySelector(".add-btn").addEventListener("click", async ()=>{
+        const start = form.querySelector(".in-start").value;
+        const end = form.querySelector(".in-end").value;
+        const subject = form.querySelector(".in-subject").value.trim();
+        if(!start || !end || !subject){ return; }
+        if(end <= start){ alert("O horário final deve ser depois do inicial."); return; }
+        state.schedule[d].push({ id: "s_"+Date.now()+"_"+Math.random().toString(36).slice(2,7), start, end, subject });
+        await saveState();
+        renderDias();
+        renderSubjectsDatalist();
+      });
+    }
+  }
+
+  function renderSubjectsDatalist(){
+    let dl = document.getElementById("subjects-list");
+    if(!dl){
+      dl = document.createElement("datalist");
+      dl.id = "subjects-list";
+      document.body.appendChild(dl);
+    }
+    const subjects = new Set();
+    Object.values(state.schedule).forEach(list=>list.forEach(s=>subjects.add(s.subject)));
+    dl.innerHTML = Array.from(subjects).map(s=>`<option value="${escapeHtml(s)}">`).join("");
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ---------- CALENDARIO TAB ----------
+  let calYear = new Date().getFullYear();
+  let calMonth = new Date().getMonth()+1; // 1-12
+  let selectedDate = null;
+
+  document.getElementById("prev-month").addEventListener("click", ()=>{
+    calMonth--; if(calMonth<1){calMonth=12; calYear--;}
+    selectedDate = null;
+    renderCalendar();
+  });
+  document.getElementById("next-month").addEventListener("click", ()=>{
+    calMonth++; if(calMonth>12){calMonth=1; calYear++;}
+    selectedDate = null;
+    renderCalendar();
+  });
+
+  function renderCalendar(){
+    document.getElementById("cal-month-label").textContent = `${MONTHS[calMonth-1]} de ${calYear}`;
+    const grid = document.getElementById("cal-grid");
+    grid.innerHTML = "";
+    WEEKDAYS_SHORT.forEach(wd=>{
+      const el = document.createElement("div");
+      el.className = "wd";
+      el.textContent = wd;
+      grid.appendChild(el);
+    });
+
+    const firstDay = new Date(calYear, calMonth-1, 1).getDay();
+    const daysInMonth = new Date(calYear, calMonth, 0).getDate();
+    const todayStr = dateStr(new Date().getFullYear(), new Date().getMonth()+1, new Date().getDate());
+
+    for(let i=0;i<firstDay;i++){
+      const el = document.createElement("div");
+      el.className = "cal-cell empty";
+      grid.appendChild(el);
+    }
+
+    for(let d=1; d<=daysInMonth; d++){
+      const weekday = new Date(calYear, calMonth-1, d).getDay();
+      const slots = state.schedule[weekday] || [];
+      const ds = dateStr(calYear, calMonth, d);
+      const cell = document.createElement("div");
+      cell.className = "cal-cell";
+      if(ds===todayStr) cell.classList.add("today");
+      if(ds===selectedDate) cell.classList.add("selected");
+
+      if(slots.length===0){
+        cell.classList.add("no-slot");
+        cell.innerHTML = `<span>${d}</span>`;
+      }else{
+        const rec = state.records[ds] || {};
+        const checkedCount = slots.filter(s=>rec[s.id]).length;
+        if(checkedCount===slots.length) cell.classList.add("full");
+        else if(checkedCount>0) cell.classList.add("partial");
+        cell.innerHTML = `<span>${d}</span><span class="dot"></span>`;
+        cell.addEventListener("click", ()=>{
+          selectedDate = ds;
+          renderCalendar();
+          renderDayDetail(ds, weekday);
+        });
+      }
+      grid.appendChild(cell);
+    }
+
+    if(selectedDate){
+      const wd = new Date(...selectedDate.split("-").map((v,i)=> i===1? Number(v)-1 : Number(v))).getDay();
+      renderDayDetail(selectedDate, wd);
+    } else {
+      document.getElementById("day-detail-container").innerHTML = "";
+    }
+  }
+
+  function renderDayDetail(ds, weekday){
+    const container = document.getElementById("day-detail-container");
+    const slots = (state.schedule[weekday]||[]).slice().sort((a,b)=>a.start.localeCompare(b.start));
+    if(slots.length===0){
+      container.innerHTML = "";
+      return;
+    }
+    const [y,m,d] = ds.split("-").map(Number);
+    const niceDate = `${d} de ${MONTHS[m-1]}`;
+    const rec = state.records[ds] || {};
+
+    const box = document.createElement("div");
+    box.className = "day-detail";
+    box.innerHTML = `<h3>${WEEKDAYS[weekday]}, ${niceDate}</h3>`;
+    slots.forEach(slot=>{
+      const row = document.createElement("div");
+      row.className = "check-row";
+      const checked = !!rec[slot.id];
+      row.innerHTML = `
+        <input type="checkbox" ${checked?"checked":""}>
+        <span class="label"><span class="time">${slot.start}–${slot.end}</span><span class="subj">${escapeHtml(slot.subject)}</span></span>
+      `;
+      row.querySelector("input").addEventListener("change", async (e)=>{
+        if(!state.records[ds]) state.records[ds] = {};
+        state.records[ds][slot.id] = e.target.checked;
+        await saveState();
+        renderCalendar();
+      });
+      box.appendChild(row);
+    });
+    container.innerHTML = "";
+    container.appendChild(box);
+  }
+
+  // ---------- RELATORIO TAB ----------
+  const reportMonthInput = document.getElementById("report-month");
+  (function initReportMonth(){
+    const now = new Date();
+    reportMonthInput.value = `${now.getFullYear()}-${pad(now.getMonth()+1)}`;
+  })();
+
+  document.getElementById("gerar-relatorio").addEventListener("click", ()=>{
+    const val = reportMonthInput.value;
+    if(!val) return;
+    const [y,m] = val.split("-").map(Number);
+    buildReport(y,m);
+  });
+
+  function buildReport(year, month){
+    const daysInMonth = new Date(year, month, 0).getDate();
+    let plannedTotal = 0, studiedTotal = 0;
+    const bySubject = {}; // name -> {planned, studied}
+
+    for(let d=1; d<=daysInMonth; d++){
+      const weekday = new Date(year, month-1, d).getDay();
+      const slots = state.schedule[weekday] || [];
+      if(slots.length===0) continue;
+      const ds = dateStr(year, month, d);
+      const rec = state.records[ds] || {};
+      slots.forEach(slot=>{
+        const dur = slotDuration(slot);
+        plannedTotal += dur;
+        if(!bySubject[slot.subject]) bySubject[slot.subject] = {planned:0, studied:0};
+        bySubject[slot.subject].planned += dur;
+        if(rec[slot.id]){
+          studiedTotal += dur;
+          bySubject[slot.subject].studied += dur;
+        }
+      });
+    }
+
+    const resultEl = document.getElementById("relatorio-resultado");
+    resultEl.innerHTML = "";
+
+    const wrap = document.createElement("div");
+    wrap.id = "relatorio-conteudo";
+
+    if(plannedTotal===0){
+      wrap.innerHTML = `
+        <div class="report-title">${MONTHS[month-1]} de ${year}</div>
+        <div class="empty-state">Nenhum horário programado para este mês.<br>Configure sua semana na aba "Horários".</div>
+      `;
+      resultEl.appendChild(wrap);
+      return;
+    }
+
+    const pct = studiedTotal / plannedTotal;
+    const pctDisplay = Math.round(pct*100);
+
+    const header = document.createElement("div");
+    header.innerHTML = `
+      <div class="report-title">${MONTHS[month-1]} de ${year}</div>
+      <p class="report-sub">Relatório gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
+      <div class="stat-row">
+        <div class="stat-box"><div class="num">${fmtMin(plannedTotal)}</div><div class="lbl">Previsto no mês</div></div>
+        <div class="stat-box"><div class="num">${fmtMin(studiedTotal)}</div><div class="lbl">Estudado</div></div>
+        <div class="stat-box"><div class="num">${pctDisplay}%</div><div class="lbl">Concluído</div></div>
+      </div>
+    `;
+    wrap.appendChild(header);
+
+    // donut chart
+    const donutWrap = document.createElement("div");
+    donutWrap.className = "donut-wrap";
+    donutWrap.innerHTML = buildDonutSvg(pct, pctDisplay);
+    wrap.appendChild(donutWrap);
+
+    // subject table
+    const table = document.createElement("table");
+    table.className = "subjects";
+    const idxMap = {};
+    let thead = `<thead><tr><th>Matéria</th><th>Progresso</th><th>Estudado / Previsto</th></tr></thead>`;
+    let rows = "";
+    Object.entries(bySubject).sort((a,b)=>b[1].planned-a[1].planned).forEach(([name,v])=>{
+      const p = v.planned>0? Math.round((v.studied/v.planned)*100) : 0;
+      const color = subjectColor(name, idxMap);
+      rows += `<tr>
+        <td class="subj-name" style="color:${color}">${escapeHtml(name)}</td>
+        <td style="width:35%"><div class="bar-track"><div class="bar-fill" style="width:${p}%;background:${color}"></div></div></td>
+        <td>${fmtMin(v.studied)} / ${fmtMin(v.planned)}</td>
+      </tr>`;
+    });
+    table.innerHTML = thead + `<tbody>${rows}</tbody>`;
+    wrap.appendChild(table);
+
+    resultEl.appendChild(wrap);
+
+    const actions = document.createElement("div");
+    actions.className = "actions-row";
+    actions.innerHTML = `<button class="btn" id="baixar-pdf">Baixar PDF</button>`;
+    resultEl.appendChild(actions);
+
+    document.getElementById("baixar-pdf").addEventListener("click", ()=>{
+      exportPdf(wrap, `relatorio-estudos-${year}-${pad(month)}`);
+    });
+  }
+
+  function buildDonutSvg(pct, pctDisplay){
+    const r = 80, cx=100, cy=100, sw=24;
+    const circ = 2*Math.PI*r;
+    const dash = (circ*pct).toFixed(2);
+    return `
+      <svg width="200" height="200" viewBox="0 0 200 200">
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#EAE4D3" stroke-width="${sw}"></circle>
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#B8862E" stroke-width="${sw}"
+          stroke-dasharray="${dash} ${circ.toFixed(2)}" stroke-linecap="round"
+          transform="rotate(-90 ${cx} ${cy})"></circle>
+        <text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Source Serif 4, serif" font-size="30" font-weight="700" fill="#2B2A28">${pctDisplay}%</text>
+        <text x="${cx}" y="${cy+20}" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#5B564C">concluído</text>
+      </svg>
+    `;
+  }
+
+  async function exportPdf(node, filename){
+    const btn = document.getElementById("baixar-pdf");
+    const originalText = btn.textContent;
+    btn.textContent = "Gerando...";
+    btn.disabled = true;
+    try{
+      const canvas = await html2canvas(node, {scale:2, backgroundColor:"#FCFAF4"});
+      const imgData = canvas.toDataURL("image/png");
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ unit:"pt", format:"a4" });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const margin = 30;
+      const imgWidth = pageWidth - margin*2;
+      const imgHeight = canvas.height * (imgWidth / canvas.width);
+      pdf.addImage(imgData, "PNG", margin, margin, imgWidth, imgHeight);
+      pdf.save(filename + ".pdf");
+    }catch(e){
+      console.error(e);
+      alert("Não foi possível gerar o PDF. Tente novamente.");
+    }finally{
+      btn.textContent = originalText;
+      btn.disabled = false;
+    }
+  }
+
+  // ---------- RESET ----------
+  document.getElementById("reset-link").addEventListener("click", async ()=>{
+    if(confirm("Isso vai apagar todos os horários e registros salvos. Deseja continuar?")){
+      state = { schedule:{0:[],1:[],2:[],3:[],4:[],5:[],6:[]}, records:{} };
+      await saveState();
+      renderDias();
+      renderCalendar();
+      document.getElementById("relatorio-resultado").innerHTML = "";
+    }
+  });
+
+  // ---------- INIT ----------
+  (async function init(){
+    await loadState();
+    renderDias();
+    renderSubjectsDatalist();
+    renderCalendar();
+  })();
+
+})();
+</script>
+</body>
+</html>
